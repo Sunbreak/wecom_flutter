@@ -3,8 +3,12 @@ import 'package:flutter/services.dart';
 class WecomFlutter {
   static const _methodChannel = MethodChannel('wecom_flutter');
 
-  Future<String?> getPlatformVersion() async {
-    final version = await _methodChannel.invokeMethod<String>('getPlatformVersion');
-    return version;
+  static Future<bool> registerApp({
+    required String schema,
+  }) async {
+    bool registered = await _methodChannel.invokeMethod('registerApp', {
+      'schema': schema
+    });
+    return registered;
   }
 }
