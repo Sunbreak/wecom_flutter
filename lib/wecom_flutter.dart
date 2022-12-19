@@ -1,8 +1,10 @@
-
-import 'wecom_flutter_platform_interface.dart';
+import 'package:flutter/services.dart';
 
 class WecomFlutter {
-  Future<String?> getPlatformVersion() {
-    return WecomFlutterPlatform.instance.getPlatformVersion();
+  static const _methodChannel = MethodChannel('wecom_flutter');
+
+  Future<String?> getPlatformVersion() async {
+    final version = await _methodChannel.invokeMethod<String>('getPlatformVersion');
+    return version;
   }
 }
