@@ -15,4 +15,9 @@ class WecomFlutter {
     });
     return registered;
   }
+
+  static Future<bool> isWWAppInstalled() async {
+    bool isWWAppInstalled = await _methodChannel.invokeMethod('isWWAppInstalled');
+    return isWWAppInstalled;
+  }
 }
