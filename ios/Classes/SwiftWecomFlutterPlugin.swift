@@ -16,6 +16,8 @@ public class SwiftWecomFlutterPlugin: NSObject, FlutterPlugin {
       let agentId = args["agentId"] as! String
       let registered = WWKApi.registerApp(schema, corpId: appId, agentId: agentId)
       result(registered)
+    } else if (call.method == "isWWAppInstalled") {
+      result(WWKApi.isAppInstalled())
     } else {
       result(FlutterMethodNotImplemented)
     }

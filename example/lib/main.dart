@@ -39,6 +39,13 @@ class _MyAppState extends State<MyApp> {
                   print('registered $registered');
                 },
               ),
+              ElevatedButton(
+                child: const Text('isWWAppInstalled'),
+                onPressed: () async {
+                  var isWWAppInstalled = await WecomFlutter.isWWAppInstalled();
+                  print('isWWAppInstalled $isWWAppInstalled');
+                },
+              ),
             ],
           ),
         ),

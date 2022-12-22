@@ -36,6 +36,8 @@ class WecomFlutterPlugin: FlutterPlugin, MethodCallHandler {
       val schema = args["schema"] as String
       val registered = wwapi.registerApp(schema)
       result.success(registered)
+    } else if (call.method == "isWWAppInstalled") {
+      result.success(wwapi.isWWAppInstalled)
     } else {
       result.notImplemented()
     }
