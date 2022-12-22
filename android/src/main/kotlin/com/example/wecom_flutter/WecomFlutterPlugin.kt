@@ -1,6 +1,8 @@
 package com.example.wecom_flutter
 
 import androidx.annotation.NonNull
+import com.tencent.wework.api.IWWAPI
+import com.tencent.wework.api.WWAPIFactory
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
@@ -16,20 +18,26 @@ class WecomFlutterPlugin: FlutterPlugin, MethodCallHandler {
   /// when the Flutter Engine is detached from the Activity
   private lateinit var channel : MethodChannel
 
+  private lateinit var wwapi: IWWAPI
+
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "wecom_flutter")
     channel.setMethodCallHandler(this)
-  }
-
-  override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
-    if (call.method == "getPlatformVersion") {
-      result.success("Android ${android.os.Build.VERSION.RELEASE}")
-    } else {
-      result.notImplemented()
-    }
+    wwapi = WWAPIFactory.createWWAPI(flutterPluginBinding.applicationContext)
   }
 
   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
     channel.setMethodCallHandler(null)
+  }
+
+  override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
+    if (call.method == "registerApp") {
+      val args = call.arguments as Map<String, Any>
+      val schema = args["schema"] as String
+      val registered = wwapi.registerApp(schema)
+      result.success(registered)
+    } else {
+      result.notImplemented()
+    }
   }
 }
