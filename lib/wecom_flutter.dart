@@ -1,5 +1,9 @@
 import 'package:flutter/services.dart';
 
+import 'src/models.dart';
+
+export 'src/models.dart';
+
 typedef OnAuthResponse = void Function(Map<String, dynamic> resp);
 
 class WecomFlutter {
@@ -46,6 +50,14 @@ class WecomFlutter {
   Future<bool> sendWeComAuth({String? state}) async {
     bool sent = await _methodChannel.invokeMethod('sendWeComAuth', {
       'state': state,
+    });
+    return sent;
+  }
+
+  Future<bool> shareToWeCom(WeComShareBaseModel model) async {
+    bool sent = await _methodChannel.invokeMethod('shareToWeCom', {
+      'type': model.runtimeType.toString(),
+      'model': model.toMap(),
     });
     return sent;
   }

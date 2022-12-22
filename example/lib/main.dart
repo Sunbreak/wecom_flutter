@@ -56,6 +56,13 @@ class _MyAppState extends State<MyApp> {
                   print('sendWeComAuth $sent');
                 },
               ),
+              ElevatedButton(
+                child: const Text('shareWebPage'),
+                onPressed: () async {
+                  var sent = await WecomFlutter().shareToWeCom(WeComShareWebPageModel('https://github.com', title: 'Github'));
+                  print('shareToWeCom $sent');
+                },
+              ),
             ],
           ),
         ),

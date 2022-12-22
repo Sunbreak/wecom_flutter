@@ -26,6 +26,16 @@ public class SwiftWecomFlutterPlugin: NSObject, FlutterPlugin {
       let req = WWKSSOReq()
       req.state = args["state"] as? String ?? ""
       result(WWKApi.send(req))
+    } else if (call.method == "shareToWeCom") {
+      let args = call.arguments as! Dictionary<String, Any>
+      let type = args["type"] as! String
+      let model = args["model"] as! Dictionary<String, Any>
+      let req = buildShareRequest(type, model)
+      if (req != nil) {
+        result(WWKApi.send(req))
+      } else {
+        result(FlutterError(code: "ArgumentError", message: nil, details: nil))
+      }
     } else {
       result(FlutterMethodNotImplemented)
     }
@@ -44,6 +54,23 @@ extension SwiftWecomFlutterPlugin: WWKApiDelegate {
         "code": authResp.code,
         "state": authResp.state,
       ])
+    }
+  }
+}
+
+extension SwiftWecomFlutterPlugin {
+  private func buildShareRequest(_ type: String, _ model: Dictionary<String, Any>) -> WWKSendMessageReq? {
+    switch (type) {
+    case "WeComShareWebPageModel": do {
+      let attachment = WWKMessageLinkAttachment()
+      attachment.url = model["url"] as! String
+      attachment.title = model["title"] as? String
+      let req = WWKSendMessageReq()
+      req.attachment = attachment
+      return req
+    }
+    default:
+      return nil
     }
   }
 }
