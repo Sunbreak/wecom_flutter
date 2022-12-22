@@ -9,6 +9,15 @@ public class SwiftWecomFlutterPlugin: NSObject, FlutterPlugin {
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    result("iOS " + UIDevice.current.systemVersion)
+    if (call.method == "registerApp") {
+      let args = call.arguments as! Dictionary<String, Any>
+      let schema = args["schema"] as! String
+      let appId = args["appId"] as! String
+      let agentId = args["agentId"] as! String
+      let registered = WWKApi.registerApp(schema, corpId: appId, agentId: agentId)
+      result(registered)
+    } else {
+      result(FlutterMethodNotImplemented)
+    }
   }
 }
