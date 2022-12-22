@@ -35,7 +35,7 @@ class _MyAppState extends State<MyApp> {
               ElevatedButton(
                 child: const Text('registerApp'),
                 onPressed: () async {
-                  var registered = await WecomFlutter.registerApp(schema: MY_SCHEMA);
+                  var registered = await WecomFlutter.registerApp(schema: MY_SCHEMA, appId: MY_APPID, agentId: MY_AGENTID);
                   print('registered $registered');
                 },
               ),
