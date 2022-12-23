@@ -2,7 +2,9 @@ package com.example.wecom_flutter
 
 import androidx.annotation.NonNull
 import com.tencent.wework.api.IWWAPI
+import com.tencent.wework.api.IWWAPIEventHandler
 import com.tencent.wework.api.WWAPIFactory
+import com.tencent.wework.api.model.WWAuthMessage
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
@@ -20,6 +22,12 @@ class WecomFlutterPlugin: FlutterPlugin, MethodCallHandler {
 
   private lateinit var wwapi: IWWAPI
 
+  private lateinit var schema: String
+
+  private var appId: String? = null
+
+  private var agentId: String? = null
+
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "wecom_flutter")
     channel.setMethodCallHandler(this)
@@ -33,13 +41,34 @@ class WecomFlutterPlugin: FlutterPlugin, MethodCallHandler {
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
     if (call.method == "registerApp") {
       val args = call.arguments as Map<String, Any>
-      val schema = args["schema"] as String
+      schema = args["schema"] as String
+      appId = args["appId"] as String
+      agentId = args["agentId"] as String
       val registered = wwapi.registerApp(schema)
       result.success(registered)
     } else if (call.method == "isWWAppInstalled") {
       result.success(wwapi.isWWAppInstalled)
+    } else if (call.method == "sendWeComAuth") {
+      val args = call.arguments as Map<String, Any>
+      val req = WWAuthMessage.Req().also {
+        it.sch = schema
+        it.appId = appId
+        it.agentId = agentId
+        it.state = args["state"] as? String
+      }
+      result.success(wwapi.sendMessage(req, eventHandler))
     } else {
       result.notImplemented()
+    }
+  }
+
+  private val eventHandler = IWWAPIEventHandler { msg ->
+    if (msg is WWAuthMessage.Resp) {
+      channel.invokeMethod("onAuthResponse", mapOf(
+        "errCode" to msg.errCode,
+        "code" to msg.code,
+        "state" to msg.state,
+      ))
     }
   }
 }

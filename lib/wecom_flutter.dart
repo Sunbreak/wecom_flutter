@@ -1,9 +1,31 @@
 import 'package:flutter/services.dart';
 
-class WecomFlutter {
-  static const _methodChannel = MethodChannel('wecom_flutter');
+typedef OnAuthResponse = void Function(Map<String, dynamic> resp);
 
-  static Future<bool> registerApp({
+class WecomFlutter {
+  static late final _instance = WecomFlutter._();
+
+  factory WecomFlutter() => _instance;
+
+  final _methodChannel = const MethodChannel('wecom_flutter');
+
+  OnAuthResponse? onAuthResponse;
+
+  WecomFlutter._() {
+    _methodChannel.setMethodCallHandler(_handleResponse);
+  }
+
+  Future<dynamic> _handleResponse(MethodCall call) async {
+    if (call.method == 'onAuthResponse') {
+      onAuthResponse?.call({
+        'errCode': call.arguments['errCode'],
+        'code': call.arguments['code'],
+        'state': call.arguments['state'],
+      });
+    }
+  }
+
+  Future<bool> registerApp({
     required String schema,
     required String appId,
     required String agentId,
@@ -16,8 +38,15 @@ class WecomFlutter {
     return registered;
   }
 
-  static Future<bool> isWWAppInstalled() async {
+  Future<bool> isWWAppInstalled() async {
     bool isWWAppInstalled = await _methodChannel.invokeMethod('isWWAppInstalled');
     return isWWAppInstalled;
+  }
+
+  Future<bool> sendWeComAuth({String? state}) async {
+    bool sent = await _methodChannel.invokeMethod('sendWeComAuth', {
+      'state': state,
+    });
+    return sent;
   }
 }

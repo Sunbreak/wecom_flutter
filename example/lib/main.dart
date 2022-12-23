@@ -35,15 +35,25 @@ class _MyAppState extends State<MyApp> {
               ElevatedButton(
                 child: const Text('registerApp'),
                 onPressed: () async {
-                  var registered = await WecomFlutter.registerApp(schema: MY_SCHEMA, appId: MY_APPID, agentId: MY_AGENTID);
+                  var registered = await WecomFlutter().registerApp(schema: MY_SCHEMA, appId: MY_APPID, agentId: MY_AGENTID);
                   print('registered $registered');
                 },
               ),
               ElevatedButton(
                 child: const Text('isWWAppInstalled'),
                 onPressed: () async {
-                  var isWWAppInstalled = await WecomFlutter.isWWAppInstalled();
+                  var isWWAppInstalled = await WecomFlutter().isWWAppInstalled();
                   print('isWWAppInstalled $isWWAppInstalled');
+                },
+              ),
+              ElevatedButton(
+                child: const Text('sendWeComAuth'),
+                onPressed: () async {
+                  WecomFlutter().onAuthResponse ??= (Map<String, dynamic> resp) {
+                    print('onAuthResponse $resp');
+                  };
+                  var sent = await WecomFlutter().sendWeComAuth();
+                  print('sendWeComAuth $sent');
                 },
               ),
             ],
