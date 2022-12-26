@@ -6,6 +6,7 @@ public class SwiftWecomFlutterPlugin: NSObject, FlutterPlugin {
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let instance = SwiftWecomFlutterPlugin()
+    registrar.addApplicationDelegate(instance)
     instance.channel = FlutterMethodChannel(name: "wecom_flutter", binaryMessenger: registrar.messenger())
     registrar.addMethodCallDelegate(instance, channel: instance.channel)
   }
@@ -32,14 +33,17 @@ public class SwiftWecomFlutterPlugin: NSObject, FlutterPlugin {
 }
 
 extension SwiftWecomFlutterPlugin: WWKApiDelegate {
+  public func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+    return WWKApi.handleOpen(url, delegate: self)
+  }
+
   public func onResp(_ resp: WWKBaseResp) {
-    guard let authResp = resp as? WWKSSOResp else {
-      return
+    if let authResp = resp as? WWKSSOResp {
+      self.channel.invokeMethod("onAuthResponse", arguments: [
+        "errCode": authResp.errCode,
+        "code": authResp.code,
+        "state": authResp.state,
+      ])
     }
-    self.channel.invokeMethod("onAuthResponse", arguments: [
-      "errCode": authResp.errCode,
-      "code": authResp.code,
-      "state": authResp.state,
-    ])
   }
 }
