@@ -14,9 +14,9 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/wecom_flutter/ios"
 
 SPEC CHECKSUMS:
-  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
-  wecom_flutter: 33854c1794a07e06c5d19b1d6aff6c13dc78a443
+  Flutter: 6379ee25a4cc4408a09337928449b1de707282aa
+  wecom_flutter: c88c3ee519d10fdb3a38d2e0c5189b3936db909b
 
 PODFILE CHECKSUM: fb8d7b3c682ea3bea514eb23c538c90f225a5549
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.10.1
